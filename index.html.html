@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Smarto.Space – AI Automation for Modern Businesses</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0a0a0a;
+            color: #00f2ff;
+            padding: 20px;
+        }
+        .content {
+            max-width: 900px;
+            margin: auto;
+        }
+        h1, h2 {
+            color: #00f2ff;
+        }
+        ul {
+            line-height: 1.6;
+        }
+        #chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00f2ff;
+            padding: 10px;
+            border-radius: 10px;
+            width: 320px;
+            height: 500px;
+            box-shadow: 0 0 10px #00f2ff;
+            z-index: 9999;
+            display: none;
+        }
+        #chat-box {
+            margin-top: 10px;
+            background: #111;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            height: 350px;
+            overflow-y: auto;
+        }
+        #chat-input {
+            width: 80%;
+            padding: 6px;
+        }
+        #chat-send {
+            padding: 6px 10px;
+            margin-left: 5px;
+        }
+        #chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9998;
+            background: #00f2ff;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Smarto.Space – AI Automation for Modern Businesses</h1>
+        <p>Welcome to <strong>Smarto.Space</strong>, your gateway to next-generation automation. We build powerful AI tools that help businesses grow faster, work smarter, and deliver amazing customer experiences — all on autopilot.</p>
+        <p>From real-time chat to live phone conversations, Smarto handles it for you — day and night.</p>
+        <h2>What We Offer</h2>
+        <ul>
+            <li><strong>James AI Chatbot:</strong> A 24/7 website assistant that handles live chat, captures leads, answers FAQs, and guides customers instantly — with zero human effort.</li>
+            <li><strong>AI Voice Agents for Calls:</strong> Hyper-realistic AI voice agents that handle <strong>sales calls</strong> and <strong>customer service calls</strong> like a pro.</li>
+            <li><strong>Custom Automation Workflows:</strong> We connect your forms, CRM, WhatsApp, and emails into a single AI-powered system — fully automated and always active.</li>
+        </ul>
+        <h2>Why Smarto.Space?</h2>
+        <ul>
+            <li>No-code setup — go live in minutes</li>
+            <li>Stylish branded chatbot with your logo and custom greeting</li>
+            <li>Works across unlimited client websites</li>
+            <li>Free updates and fast support</li>
+            <li>Hosted for free</li>
+            <li>Powered by the <strong>latest GPT</strong> for human-like conversations</li>
+        </ul>
+        <h2>Enjoy a 1-Day Free Trial</h2>
+        <p>Test it with real customers — no payment required. Watch AI boost your business before you spend a single cent.</p>
+        <h2>Need Help?</h2>
+        <p>James, our AI assistant, is live in the corner. Ask anything, anytime.</p>
+        <p><strong>Smarto.Space</strong> — Smarter Conversations. Smarter Conversions.</p>
+    </div>
+
+    <div id="chat-widget">
+        <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="james-avatar.png" alt="James" class="avatar">
+                <div>
+                    <strong>James - AI Assistant</strong><br>
+                    <small style="color: green;">● James is online</small>
+                </div>
+            </div>
+            <button id="chat-close" class="close-btn">&times;</button>
+        </div>
+        <div id="chat-box"></div>
+        <input id="chat-input" placeholder="Type your message..." />
+        <button id="chat-send">Send</button>
+    </div>
+
+    <button id="chat-toggle">Chat with us</button>
+
+    <script>
+        const chatWidget = document.getElementById('chat-widget');
+        const chatToggle = document.getElementById('chat-toggle');
+        const chatClose = document.getElementById('chat-close');
+        const chatInput = document.getElementById('chat-input');
+        const chatBox = document.getElementById('chat-box');
+        const chatSend = document.getElementById('chat-send');
+
+        chatToggle.addEventListener('click', () => {
+            chatWidget.style.display = 'block';
+            chatToggle.style.display = 'none';
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatWidget.style.display = 'none';
+            chatToggle.style.display = 'block';
+        });
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            chatBox.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+            chatInput.value = '';
+            try {
+                const res = await fetch('https://smarto-gsheet-bot.onrender.com/chat', {
+
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await res.json();
+                chatBox.innerHTML += `<div><strong>James:</strong> ${data.reply}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch {
+                chatBox.innerHTML += `<div><strong>James:</strong> Sorry, I can't respond right now.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
