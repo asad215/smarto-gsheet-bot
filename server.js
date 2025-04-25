@@ -1,7 +1,8 @@
-
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
+const { google } = require('googleapis');
+const { GoogleAuth } = require('google-auth-library');
 require('dotenv').config();
 
 const app = express();
@@ -10,20 +11,49 @@ const port = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
-// Sample FAQs - replace this with dynamic fetch from Google Sheets if needed
-const faqs = [
-  { question: "What is Smarto.Space?", answer: "Smarto.Space is an AI automation platform for businesses." },
-  { question: "Who is James?", answer: "James is the 24/7 AI chatbot assistant for Smarto.Space." },
-  { question: "Do you offer a free trial?", answer: "Yes, we offer a 1-day free trial with no payment required." }
-];
+// Setup Google Sheets API with credentials.json
+const auth = new GoogleAuth({
+  keyFile: 'credentials.json',
+  scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+});
+const sheets = google.sheets({ version: 'v4', auth });
 
-function getFAQAnswer(userMessage) {
-  const found = faqs.find(faq =>
-    userMessage.toLowerCase().includes(faq.question.toLowerCase())
-  );
-  return found ? found.answer : null;
+const SPREADSHEET_ID = '1DBsMpAQuvqJfd2_lrnzlwZSW4lllFf4dYbD2ABZ0qvY'; // your sheet ID
+const RANGE = 'FAQs!A:B'; // question in A, answer in B
+
+let faqs = [];
+
+// Load FAQs from Google Sheets
+async function fetchFAQs() {
+  try {
+    const client = await auth.getClient();
+    const sheetsClient = google.sheets({ version: 'v4', auth: client });
+    const response = await sheetsClient.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: RANGE,
+    });
+    return response.data.values || [];
+  } catch (error) {
+    console.error('Error fetching FAQs from Google Sheets:', error.message);
+    return [];
+  }
 }
 
+// Fetch once at startup
+async function loadFAQs() {
+  faqs = await fetchFAQs();
+}
+loadFAQs();
+
+// Find matching FAQ answer
+function getFAQAnswer(userMessage) {
+  const found = faqs.find(faq =>
+    userMessage.toLowerCase().includes(faq[0]?.toLowerCase())
+  );
+  return found ? found[1] : null;
+}
+
+// Chat endpoint
 app.post('/chat', async (req, res) => {
   const userMessage = req.body.message;
   const faqAnswer = getFAQAnswer(userMessage);
@@ -32,6 +62,7 @@ app.post('/chat', async (req, res) => {
     return res.json({ reply: faqAnswer });
   }
 
+  // Fallback to GPT if no FAQ match
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
