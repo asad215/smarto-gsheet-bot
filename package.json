@@ -1,0 +1,17 @@
+{
+  "name": "chatbot-server",
+  "version": "1.0.0",
+  "description": "Express server forwarding chat messages to OpenAI GPT-3.5 Turbo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.7",
+    "dotenv": "^8.2.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "googleapis": "^118.0.0"
+  }
+}
