@@ -19,7 +19,8 @@ const auth = new GoogleAuth({
 const sheets = google.sheets({ version: 'v4', auth });
 
 const SPREADSHEET_ID = '1DBsMpAQuvqJfd2_lrnzlwZSW4lllFf4dYbD2ABZ0qvY'; // your sheet ID
-const RANGE = 'Smarto FAQs'!A:B; let faqs = [];
+const RANGE = 'Smarto FAQs'!A:B;
+let faqs = [ ];
 
 // Load FAQs from Google Sheets
 async function fetchFAQs() {
