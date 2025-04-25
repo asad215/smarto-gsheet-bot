@@ -12,22 +12,25 @@ const port = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
-// Setup Google Sheets API with credentials.json
+// Setup Google Sheets API using credentials.json
 const auth = new GoogleAuth({
-  keyFile: 'credentials.json',
+  keyFile: './credentials.json', // Ensure this is the exact path and file is present
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
 });
-const sheets = google.sheets({ version: 'v4', auth });
 
-const SPREADSHEET_ID = '1DBsMpAQuvqJfd2_lrnzlwZSW4lllFf4dYbD2ABZ0qvY'; // your sheet ID
+let sheetsClient;
+(async () => {
+  const client = await auth.getClient();
+  sheetsClient = google.sheets({ version: 'v4', auth: client });
+})();
+
+const SPREADSHEET_ID = '1DBsMpAQuvqJfd2_lrnzlwZSW4lllFf4dYbD2ABZ0qvY';
 const RANGE = 'Sheet1!A:B';
-let faqs = [ ];
+let faqs = [];
 
-// Load FAQs from Google Sheets
+// Fetch FAQs from Google Sheets
 async function fetchFAQs() {
   try {
-    const client = await auth.getClient();
-    const sheetsClient = google.sheets({ version: 'v4', auth: client });
     const response = await sheetsClient.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: RANGE,
@@ -39,13 +42,13 @@ async function fetchFAQs() {
   }
 }
 
-// Fetch once at startup
+// Load FAQs once at startup
 async function loadFAQs() {
   faqs = await fetchFAQs();
 }
 loadFAQs();
 
-// Find matching FAQ answer
+// Match FAQ
 function getFAQAnswer(userMessage) {
   const found = faqs.find(faq =>
     userMessage.toLowerCase().includes(faq[0]?.toLowerCase())
@@ -53,7 +56,7 @@ function getFAQAnswer(userMessage) {
   return found ? found[1] : null;
 }
 
-// Chat endpoint
+// Handle /chat requests
 app.post('/chat', async (req, res) => {
   const userMessage = req.body.message;
   const faqAnswer = getFAQAnswer(userMessage);
@@ -62,7 +65,6 @@ app.post('/chat', async (req, res) => {
     return res.json({ reply: faqAnswer });
   }
 
-  // Fallback to GPT if no FAQ match
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
