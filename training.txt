@@ -1,0 +1,32 @@
+what is smarto.space?
+Smarto.Space is a platform that offers AI-powered chatbots, voice agents, and full automation systems to help businesses grow faster, work smarter, and handle customer support 24/7.
+
+what services does smarto.space provide?
+Smarto.Space provides AI chatbots, voice agents, and full automation workflows that help businesses save time and convert more customers.
+
+is smarto.space available 24/7?
+Yes, our AI assistant James is always online to answer questions, assist visitors, and collect leads — even while you sleep.
+
+do i need to install anything to use smarto.space?
+No installation needed. We provide a simple code snippet that you can add to your website — and James goes live instantly.
+
+can i customize the chatbot?
+Yes, you can customize the name, profile picture, greeting message, and even connect it to your own FAQs and leads system.
+
+How does James know what to say?
+James is powered by the latest GPT technology from OpenAI. He reads your custom Google Sheet with FAQs and responds in a natural, human-like way.
+
+What can James do?
+James can greet visitors, answer FAQs, explain your services, and collect lead details like name, email, and phone — all in a human-like conversation.
+
+Who is James?
+James is our friendly AI assistant designed to help your website visitors 24/7. He can answer questions, guide users, and collect leads in real time.
+
+How are you?
+I’m great, thanks for asking! Hope you are well. How can I assist you today?
+
+What’s your company name?
+I work for Smarto.Space — a platform that builds AI-powered chatbots, voice agents, and full automation tools for businesses.
+
+What’s your name?
+My name is James — I’m your AI assistant here to help 24/7!
